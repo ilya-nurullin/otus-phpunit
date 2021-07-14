@@ -4,12 +4,21 @@ declare(strict_types=1);
 namespace AppUnitTests;
 
 use App\MushroomCollector;
-use Exception;
+use App\StringPrefix;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use function random_int;
 
+/**
+ * @group mushroom
+ */
 class MushroomCollectorTestCase extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
+    /**
+     * @group positive
+     */
     public function test1(): void
     {
         $collector = new MushroomCollector('Вася');
@@ -17,7 +26,7 @@ class MushroomCollectorTestCase extends TestCase
         $result = $collector->goHome();
 
         // забыли assert
-        //static::assertSame('Вася принёс домой 0 грибов', $result, "Вася сразу пошёл домой, должен был принести 0 грибов");
+        static::assertSame('Вася принёс домой 0 грибов', $result, "Вася сразу пошёл домой, должен был принести 0 грибов");
     }
 
     public function testFailed(): void
@@ -30,6 +39,36 @@ class MushroomCollectorTestCase extends TestCase
         static::assertSame('Прокоп принёс домой 11 грибов', $result);
     }
 
+    /**
+     * @group positive
+     */
+    public function testMock()
+    {
+        $collector = new MushroomCollector('Прокоп');
+        $stringPrefixMock = \Mockery::mock(StringPrefix::class);
+
+        $stringPrefixMock->shouldReceive('get')->andReturn('123')->once();
+
+        $actual = $collector->ex($stringPrefixMock);
+
+        static::assertSame('123', $actual);
+    }
+
+    public function testSpy()
+    {
+        $collector = new MushroomCollector('Прокоп');
+        $stringPrefixSpy = \Mockery::spy(StringPrefix::class);
+
+        $actual = $collector->ex($stringPrefixSpy);
+
+        $stringPrefixSpy->shouldHaveBeenCalled()->get();
+
+        static::assertSame('123', $actual);
+    }
+
+    /**
+     * @test
+     */
     public function superTest2(): void
     {
         $collector = new MushroomCollector('Петя');
@@ -74,7 +113,8 @@ class MushroomCollectorTestCase extends TestCase
     public function testException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/^Слишком много грибов.+Агафон/');
+        $this->expectExceptionMessageMatches('/^Слишком много грибов.+Агафон надорвался$/');
+        $this->expectExceptionMessage('Слишком много грибов');
 
         $collector = new MushroomCollector('Агафон');
         $collector->collect(1232);

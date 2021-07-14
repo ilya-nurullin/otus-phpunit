@@ -47,4 +47,21 @@ class MushroomCollector
         }
         return "$result грибов";
     }
+
+    public function ex($pr): string {
+        return $pr->get();
+    }
+}
+
+class StringPrefix {
+    private string $str;
+
+    public function __construct(string $str)
+    {
+        $this->str = $str;
+    }
+
+    public function get(): string {
+        return '__prefix__'.$this->str;
+    }
 }
