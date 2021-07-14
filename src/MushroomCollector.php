@@ -34,9 +34,9 @@ class MushroomCollector
         if ($this->count > 1000) {
             throw new InvalidArgumentException("Слишком много грибов, {$this->name} надорвался");
         }
-//        if (intdiv($this->count % 100, 10) === 1) {
-//            return "$result грибов";
-//        }
+        if (intdiv($this->count % 100, 10) === 1) {
+            return "$result грибов";
+        }
         switch($this->count % 10) {
             case 1:
                 return "$result гриб";

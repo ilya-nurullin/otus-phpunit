@@ -54,18 +54,6 @@ class MushroomCollectorTestCase extends TestCase
         static::assertSame('123', $actual);
     }
 
-    public function testSpy()
-    {
-        $collector = new MushroomCollector('Прокоп');
-        $stringPrefixSpy = \Mockery::spy(StringPrefix::class);
-
-        $actual = $collector->ex($stringPrefixSpy);
-
-        $stringPrefixSpy->shouldHaveBeenCalled()->get();
-
-        static::assertSame('123', $actual);
-    }
-
     /**
      * @test
      */
